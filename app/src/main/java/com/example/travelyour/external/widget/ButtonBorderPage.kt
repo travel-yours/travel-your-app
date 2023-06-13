@@ -19,7 +19,7 @@ import com.example.travelyour.external.theme.primary
 @Composable
 fun ButtonBorderPage(
     onClick: () -> Unit,
-    text: String
+    text: String,
 ) {
     Button(
         onClick = onClick,
@@ -31,6 +31,7 @@ fun ButtonBorderPage(
             containerColor = Color.White,
             contentColor = primary,
         ),
+
         border = BorderStroke(1.dp, primary)
         ) {
         Text(

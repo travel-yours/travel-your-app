@@ -1,9 +1,34 @@
 package com.example.travelyour.data.source.local
 
 import com.example.travelyour.R
+import com.example.travelyour.data.response.Artikel
 import com.example.travelyour.model.ArikelList
 
-object DataProvide {
+object ArtikelDataSource {
+
+    val dummyArtikel = listOf(
+        Artikel(1,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(2,"Stay cation","Liburan Stay cation",R.drawable.gunung,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(3,"Stay cation","Liburan Stay cation",R.drawable.pantai,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(4,"Stay cation","Liburan Stay cation",R.drawable.gunung,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(5,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(6,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(7,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(8,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(9,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian"),
+        Artikel(10,"Stay cation","Liburan Stay cation",R.drawable.stay,
+            "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian")
+
+    )
 
     val articel =
         ArikelList(
@@ -13,41 +38,5 @@ object DataProvide {
             desc = "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian  kesendirian untuk menikmati ketenangan dan kedamaian",
             imageId = R.drawable.stay
         )
-    val articelList = listOf(
-        articel,   ArikelList(
-            id = 2,
-            title = "Staycation",
-            headline = "Libuaran Staycation",
-            desc = "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian",
-            imageId = R.drawable.pantai
-        ),
-        ArikelList(
-            id = 3,
-            title = "Staycation",
-            headline = "Libuaran Staycation",
-            desc = "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian",
-            imageId = R.drawable.gunung
-        ),
-        ArikelList(
-            id = 4,
-            title = "Staycation",
-            headline = "Libuaran Staycation",
-            desc = "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian",
-            imageId = R.drawable.stay
-        ),
-        ArikelList(
-            id = 5,
-            title = "Staycation",
-            headline = "Libuaran Staycation",
-            desc = "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian",
-            imageId = R.drawable.stay
-        ),
-        ArikelList(
-            id = 6,
-            title = "Staycation",
-            headline = "Libuaran Staycation",
-            desc = "berlibur dalam kesendirian untuk menikmati ketenangan dan kedamaian",
-            imageId = R.drawable.stay
-        ),
-    )
+
 }

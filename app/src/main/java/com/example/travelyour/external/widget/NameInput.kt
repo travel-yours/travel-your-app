@@ -4,53 +4,54 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.example.travelyour.external.theme.primary
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NameInput(
-value:String,
-onValuChange: (String) -> Unit,
-placeholder: String,
-errorMessage: String,
-textStyle: TextStyle = LocalTextStyle.current
+    labelValue: String, painterResources: Painter,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    errorStatus: Boolean = false,
+    textStyle: TextStyle = LocalTextStyle.current
 ) {
+    val textValue = remember { mutableStateOf("") }
 
     var isError by remember { mutableStateOf(false) }
-   Column {
-       OutlinedTextField(
-           value = value,
-           onValueChange = { newValue ->
-               onValuChange(newValue)
-               isError = newValue.isEmpty() // Contoh validasi, jika input kosong maka tampilkan pesan error
-           },
 
-           placeholder = { Text(text = placeholder) },
-           isError = isError,
-           modifier = Modifier.fillMaxWidth(),
+    Column() {
+        OutlinedTextField(
+            value = textValue.value,
+            onValueChange = {
+                textValue.value = it
+                onValueChange(it)
+            },
+            label = {Text(text = labelValue)},
+            placeholder = { Text(text = placeholder) },
+            isError = !errorStatus,
+            modifier = Modifier.fillMaxWidth(),
 
-           shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(10.dp),
 
-           colors = TextFieldDefaults.colors(
-               focusedIndicatorColor = Color.Transparent,
-               unfocusedIndicatorColor = Color.Transparent,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = primary,
+                focusedLabelColor = primary,
+                errorBorderColor = Color.Red
 
-               ),
-           singleLine = true,
-           textStyle = textStyle,
+                ),
+            leadingIcon = { Icon(painter = painterResources, contentDescription = "")},
+            singleLine = true,
+            textStyle = textStyle,
+            maxLines = 1
 
-           )
-       if (isError){
-           Text(text = errorMessage,
-           color = Color.Red,
-           modifier = Modifier.padding(top = 4.dp))
-       }
-   }
+        )
+
+    }
    }

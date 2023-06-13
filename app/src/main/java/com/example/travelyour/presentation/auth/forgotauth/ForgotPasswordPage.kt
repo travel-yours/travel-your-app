@@ -10,14 +10,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.travelyour.Locator
+import com.example.travelyour.R
 import com.example.travelyour.external.widget.ButtonPage
 import com.example.travelyour.external.widget.EmailInput
 import com.example.travelyour.external.widget.TextTitle
+import com.example.travelyour.presentation.auth.signin.SignInEvent
+import com.example.travelyour.presentation.auth.signin.SignInViewModel
 
 @Composable
 fun ForgotPasswordPage(navController: NavController) {
+    val viewModel: SignInViewModel = viewModel(factory = Locator.signInViewModelFactory)
     var email by remember {
         mutableStateOf("")
     }
@@ -31,10 +39,13 @@ fun ForgotPasswordPage(navController: NavController) {
         TextTitle(text = "Verfikasi")
         Spacer(modifier = Modifier.height(150.dp))
         EmailInput(
-            value = email ,
-            onValueChange = {email = it},
-            placeholder = "Enter Your Email" ,
-            errorMessage = "Email cannot be empty" )
+
+            labelValue = stringResource(id = R.string.email),
+            painterResource(id = R.drawable.email),
+            onValueChange = {viewModel.onEvent(SignInEvent.EmailChanged(it))},
+            errorStatus = viewModel.loginUiState.value.emailError,
+            placeholder = "Enter Your Email",
+        )
         Spacer(modifier = Modifier.height(50.dp))
         ButtonPage(onClick = {navController.navigate("sign_in")}, text = "Confirmasi")
     }

@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 
 import androidx.compose.ui.unit.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 import com.example.travelyour.R
@@ -38,21 +40,11 @@ import com.example.travelyour.external.theme.secondaryPrimay
 
 
 @Composable
-fun StartHome(navController: NavController) {
-     val infiniteTransition = rememberInfiniteTransition()
-      val alpha by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = 2000
-                0.5f at 500
-                1f at 1000
-            },
-            repeatMode = RepeatMode.Restart
-
-        )
-    )
+fun StartHome(
+    navController: NavController,
+    ) {
+    val startHomeViewModel = viewModel<StartHomeViewModel>()
+    val alpha by startHomeViewModel.alphaAnimation.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()

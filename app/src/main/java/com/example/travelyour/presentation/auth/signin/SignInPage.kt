@@ -9,16 +9,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.travelyour.Locator
+import com.example.travelyour.R
 import com.example.travelyour.external.widget.*
+import com.example.travelyour.utils.ResultState
 
 @Composable
 fun SignInPage(navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var password by remember{ mutableStateOf("") }
-   Column(
+    val viewModel:SignInViewModel = viewModel(factory = Locator.signInViewModelFactory)
+    val signInViewState by viewModel.signInViewState.collectAsState()
+
+    LaunchedEffect(signInViewState.resultVerifyUser) {
+        if (signInViewState.resultVerifyUser is ResultState.Success) {
+            navController.navigate("home")
+        }
+    }
+
+
+    Column(
        modifier = Modifier.padding(
            start = 16.dp,
            end = 16.dp,
@@ -30,25 +44,35 @@ fun SignInPage(navController: NavController) {
        Spacer(modifier = Modifier.padding(top = 30.dp))
        EmailInput(
 
-           value = email ,
-           onValueChange = {email = it},
+           labelValue = stringResource(id = R.string.email),
+           painterResource(id = R.drawable.email),
+           onValueChange = {viewModel.onEvent(SignInEvent.EmailChanged(it))},
+           errorStatus = viewModel.loginUiState.value.emailError,
            placeholder = "Enter Your Email",
-           errorMessage = "Email cannot be empty")
+           )
             Spacer(modifier = Modifier.padding(top = 10.dp))
             PasswordInput(
-           value = password,
-           onPasswordChange = {password = it},
+            labelValue = stringResource(id = R.string.password),
+                painterResource(id = R.drawable.lock),
+           onPasswordChange = {viewModel.onEvent(SignInEvent.PasswordChanged(it))},
+                errorStatus = viewModel.loginUiState.value.passwordError,
            placeholder = "Enter your password" ,
-           errorMessage = "Password cannot be empty")
+    )
        Spacer(modifier = Modifier.height(100.dp))
-       ButtonBorderPage(
-           onClick = {navController.navigate("sign_up")},
-           text = "Register" )
+        ButtonPage(
+            onClick = {viewModel.onEvent(SignInEvent.SignInButtonClicked) },
+            isEnabled = viewModel.allValidationState.value,
+            text = "Log In" )
+
        Spacer(modifier = Modifier.height(20.dp))
-       ButtonPage(
-           onClick = {navController.navigate("homepage")},
-           text = "Log In" )
+        ButtonBorderPage(
+
+            onClick = {navController.navigate("sign_up")},
+            text = "Register" )
        Spacer(modifier = Modifier.height(20.dp))
+       if (viewModel.loginProgress.value){
+           CircularProgressIndicator()
+       }
        TextButtonCustome(
            onClick ={navController.navigate("forgot")} ,
            text = "Forgot Password ?")
