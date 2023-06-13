@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,13 +18,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.travelyour.data.repository.UserPreferenceImpl
-import com.example.travelyour.domain.UserPreferenceRepository
 import com.example.travelyour.external.navigation.NavigationItem
 import com.example.travelyour.external.navigation.Screen
 import com.example.travelyour.external.navigation.SetupNavGraph
 import com.example.travelyour.presentation.camera.CameraActivity
-import kotlinx.coroutines.flow.map
+
 
 
 @SuppressLint("FlowOperatorInvokedInComposition")
