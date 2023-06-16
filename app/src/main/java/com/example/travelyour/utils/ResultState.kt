@@ -9,7 +9,7 @@ sealed class ResultState<out T> (
 
     object Loading: ResultState<Nothing>()
 
-    class Idle: ResultState<Nothing>()
+    object Idle: ResultState<Nothing>()
 
     class Error<T>(message: String, data: T? = null) :
         ResultState<T>(data, message)

@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,14 +27,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
+import com.example.travelyour.Locator
 import com.example.travelyour.R
-import com.example.travelyour.ml.Model7
+import com.example.travelyour.data.response.DestinationResponse
 import com.example.travelyour.ml.TLmodelv2
 import com.example.travelyour.presentation.camera.camerapage.CameraView
+import com.example.travelyour.utils.ResultState
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -45,7 +53,7 @@ import java.util.concurrent.Executors
 
 
 class CameraActivity : ComponentActivity() {
-
+    private val viewModel by viewModels<CameraViewModel> (factoryProducer = {Locator.cameraViewModelFactory})
     private lateinit var outputDirectory: File
     private lateinit var  cameraExecutor: ExecutorService
     private lateinit var photoUri: Uri
@@ -66,57 +74,48 @@ class CameraActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-    setContent {
+        setContent {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+            ) {
+                if (shouldShowCamera.value) {
+                    CameraView(
+                        outputDirectory = outputDirectory,
+                        executor = cameraExecutor,
+                        onImageCaptured = ::handleImageCapture,
+                        onError = { Log.e("Ngetrip", "View Error:", it) },
+                        modifier = Modifier.matchParentSize()
+                    )
+                }
 
-           Box(
-               modifier = Modifier
-                   .fillMaxSize()
-                   .background(Color.White),
-           ){
-             if  (shouldShowCamera.value) {
-                 CameraView(
-                     outputDirectory = outputDirectory,
-                     executor = cameraExecutor,
-                     onImageCaptured = ::handleImageCapture,
-                     onError = { Log.e("Ngetrip", "View Error:", it) },
-                     modifier = Modifier.matchParentSize()
+                if (shouldShowPhoto.value) {
+                    Image(
+                        painter = rememberImagePainter(photoUri),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    )
+                }
 
-                 )
-             }
+                if (shouldShowPhoto.value && predictedObject.value.isNotBlank()) {
+                    Text(
+                        text = predictedObject.value,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
 
-               if (shouldShowPhoto.value){
-                   Image(
-                       painter = rememberImagePainter(photoUri),
-                       contentDescription = null,
-                       modifier = Modifier
-                           .align(Alignment.TopCenter)
-                           .fillMaxSize()
-                           .padding(20.dp))
-               }
-
-               if (shouldShowPhoto.value && predictedObject.value.isNotBlank()){
-                   Text(
-                       text =predictedObject.value,
-                       modifier = Modifier.padding(16.dp))
-               }
-               if (shouldShowPhoto.value) {
-                   Button(
-                       onClick = { resetCameraState() },
-                       modifier = Modifier.align(Alignment.BottomCenter)
-                   ) {
-                       Text(text = "Kembali ke Kamera")
-                   }
-               }
-
-           }
-
-       }
+        observeImageDetectionState()
 
         requestCameraPermission()
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
-
     private fun resetCameraState() {
         shouldShowPhoto.value = false
         shouldShowCamera.value = true
@@ -140,17 +139,73 @@ class CameraActivity : ComponentActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun handleImageCapture(uri: Uri){
-        Log.i("Ngetrip","Image capture: $uri")
+    private fun handleImageCapture(uri: Uri) {
+        Log.i("Ngetrip", "Image capture: $uri")
         shouldShowCamera.value = false
 
         photoUri = uri
         shouldShowPhoto.value = true
 
-        val imagePath = photoUri.path
-        val bitmap = BitmapFactory.decodeFile(imagePath)
-        processImage(bitmap)
+        val file = File(photoUri.path!!)
+        val name = file.name
+        val description = "" // Masukkan deskripsi sesuai kebutuhan
+        val location = "" // Masukkan lokasi sesuai kebutuhan
+        val price = 0 // Masukkan harga sesuai kebutuhan
+        val facilities = "" // Masukkan fasilitas sesuai kebutuhan
+        val imageUrl = "" // Masukkan URL gambar sesuai kebutuhan
 
+        viewModel.imageDetection(file, name, description, location, price, facilities, imageUrl)
+    }
+    private fun observeImageDetectionState() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.imageDetectionState.collect { state ->
+                when (state) {
+                    is ResultState.Loading -> {
+                        // Tampilkan loading state jika diperlukan
+                    }
+                    is ResultState.Success -> {
+                        val destinationResponse = state.data // Dapatkan respons dari state
+                        val message = destinationResponse?.let { buildMessage(it) }
+                        if (message != null) {
+                            showImageDetectionResult(message)
+                        }
+                    }
+                    is ResultState.Error -> {
+                        val errorMessage = state.message
+                        showError(errorMessage)
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+    private fun buildMessage(destinationResponse: DestinationResponse): String {
+        val name = destinationResponse.name
+        val description = destinationResponse.description
+        val location = destinationResponse.location
+        val price = destinationResponse.price
+        val facilities = destinationResponse.facilities.joinToString(", ")
+        val imageUrl = destinationResponse.imageUrl
+
+        // Build message berdasarkan informasi yang diperoleh
+        val message = StringBuilder()
+        message.append("Name: $name\n")
+        message.append("Description: $description\n")
+        message.append("Location: $location\n")
+        message.append("Price: $price\n")
+        message.append("Facilities: $facilities\n")
+        message.append("Image URL: $imageUrl\n")
+
+        return message.toString()
+    }
+    private fun showImageDetectionResult(message: String) {
+        // Tampilkan hasil deteksi gambar ke pengguna, misalnya dengan menggunakan AlertDialog, Toast, atau komponen tampilan lainnya.
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showError(errorMessage: String) {
+        // Tampilkan pesan error ke pengguna, misalnya dengan menggunakan AlertDialog, Toast, atau komponen tampilan lainnya.
+        Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
     }
 
     private fun getOutputDirectory(): File{
@@ -284,3 +339,12 @@ class CameraActivity : ComponentActivity() {
         predictedObject.value = predictedClassLabel
     }
 }
+
+//     if (shouldShowPhoto.value) {
+//                   Button(
+//                       onClick = { resetCameraState() },
+//                       modifier = Modifier.align(Alignment.BottomCenter)
+//                   ) {
+//                       Text(text = "Kembali ke Kamera")
+//                   }
+//               }

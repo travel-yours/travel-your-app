@@ -9,5 +9,5 @@ data class SignInViewState(
     var emailError: Boolean = false,
     var passwordError: Boolean = false,
     val isLoading: Boolean = false,
-    val resultVerifyUser: ResultState<String> = ResultState.Idle()
+    val resultVerifyUser: ResultState<String> = ResultState.Idle
 )

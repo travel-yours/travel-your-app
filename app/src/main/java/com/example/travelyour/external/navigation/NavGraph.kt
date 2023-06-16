@@ -12,6 +12,7 @@ import com.example.travelyour.presentation.auth.signup.SignUpPage
 import com.example.travelyour.presentation.auth.signup.SignUpViewModel
 import com.example.travelyour.presentation.camera.CameraActivity
 import com.example.travelyour.presentation.feature_timeline.home.HomeTimeLineSCreen
+import com.example.travelyour.presentation.fetureprofile.ProfileScreen
 import com.example.travelyour.presentation.homepage.HomePage
 import com.example.travelyour.presentation.quesionerpage.CategoryPage
 import com.example.travelyour.presentation.splash.SplashScreen
@@ -49,6 +50,9 @@ fun SetupNavGraph(navController: NavHostController,modifier: Modifier) {
         }
         composable(route = Screen.HomeTimeline.route){
             HomeTimeLineSCreen()
+        }
+        composable(route = Screen.Profile.route){
+            ProfileScreen()
         }
     }
 

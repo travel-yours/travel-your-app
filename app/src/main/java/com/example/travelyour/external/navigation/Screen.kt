@@ -15,5 +15,6 @@ sealed class Screen (val route:String){
     object Timeline:Screen(route = "timeline")
     object Camera:Screen(route = "camera")
     object HomeTimeline:Screen(route = "hometimeline")
+    object Profile:Screen(route = "profile")
 
 }

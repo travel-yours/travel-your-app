@@ -4,15 +4,18 @@ import android.app.Application
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.travelyour.data.repository.AuthRepositoryImpl
+import com.example.travelyour.data.repository.DestinationRepositoryImpl
 import com.example.travelyour.data.repository.UserPreferenceImpl
 import com.example.travelyour.data.source.network.RetrofitBuilder
 import com.example.travelyour.domain.AuthRepository
 import com.example.travelyour.domain.UserPreferenceRepository
 import com.example.travelyour.domain.usecase.GetUserUseCase
+import com.example.travelyour.domain.usecase.ImageDetectionUseCase
 import com.example.travelyour.domain.usecase.SignInUseCase
 import com.example.travelyour.domain.usecase.SignUpUseCase
 import com.example.travelyour.presentation.auth.signin.SignInViewModel
 import com.example.travelyour.presentation.auth.signup.SignUpViewModel
+import com.example.travelyour.presentation.camera.CameraViewModel
 import com.example.travelyour.presentation.homepage.artikel.ArtikelViewModel
 import com.example.travelyour.presentation.splash.SplashViewModel
 
@@ -43,11 +46,16 @@ object Locator {
     get() = SplashViewModel.Factory(
         getUserUseCase = getUserUseCase
     )
+    val cameraViewModelFactory
+    get() = CameraViewModel.Factory(
+        imageDetectionUseCase = imageDetectionUseCase
+    )
 
     //UseCaseInjection
     private val signUpUseCase get() = SignUpUseCase(authRepository)
     private val signInUseCase get() = SignInUseCase(userPreferenceRepository, authRepository)
     private val getUserUseCase get() = GetUserUseCase(userPreferenceRepository)
+    private val imageDetectionUseCase get() = ImageDetectionUseCase(detectionRepository)
 
     //Repository Injection
     private val authRepository by lazy {
@@ -56,5 +64,8 @@ object Locator {
 
     private val userPreferenceRepository by lazy {
         UserPreferenceImpl(requireApplication.dataStore)
+    }
+    private val detectionRepository by lazy {
+        DestinationRepositoryImpl(RetrofitBuilder(requireApplication.dataStore).apiservice)
     }
 }

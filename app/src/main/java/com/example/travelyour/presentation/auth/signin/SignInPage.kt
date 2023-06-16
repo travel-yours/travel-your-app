@@ -67,7 +67,7 @@ fun SignInPage(navController: NavController) {
        Spacer(modifier = Modifier.height(20.dp))
         ButtonBorderPage(
 
-            onClick = {navController.navigate("sign_up")},
+            onClick ={navController.navigate("sign_up")},
             text = "Register" )
        Spacer(modifier = Modifier.height(20.dp))
        if (viewModel.loginProgress.value){

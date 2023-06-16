@@ -12,7 +12,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -72,28 +74,23 @@ private fun BottomBar(
     val navigationItems = listOf(
         NavigationItem(
             title = "Home",
-            icon = Icons.Default.Home,
+            icon = R.drawable.home,
             screen = Screen.Home
         ),
         NavigationItem(
             title = "Timeline",
-            icon = Icons.Default.Home,
+            icon = R.drawable.timeline,
             screen = Screen.HomeTimeline
         ),
         NavigationItem(
             title = "Camera",
-            icon = Icons.Default.Home,
+            icon = R.drawable.camera,
             screen = Screen.Camera
         ),
         NavigationItem(
-            title = "Home",
-            icon = Icons.Default.Home,
-            screen = Screen.Home
-        ),
-        NavigationItem(
-            title = "Home",
-            icon = Icons.Default.Home,
-            screen = Screen.Home
+            title = "Profile",
+            icon = R.drawable.person,
+            screen = Screen.Profile
         ),
     )
     NavigationBar(
@@ -104,9 +101,10 @@ private fun BottomBar(
         navigationItems.map { item ->
             NavigationBarItem(
                 icon ={
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = item.title)
+                        Icon(
+                            imageVector = ImageVector.vectorResource(item.icon),
+                            contentDescription = item.title
+                        )
                 },
                 label = { Text(item.title)},
                 selected = currentDestination == item.screen.route,
